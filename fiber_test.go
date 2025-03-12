@@ -177,3 +177,21 @@ func TestRequestBody(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "Hello Yusuf", string(bytes))
 }
+
+type RegisterRequest struct {
+	Username string `json:"username" xml:"username" form:"username"`
+	Password string `json:"password" xml:"password" form:"password"`
+	Name     string `json:"name" xml:"name" form:"name"`
+}
+
+func TestBodyParser(t *testing.T) {
+	app.Post("/register", func(ctx *fiber.Ctx) error {
+		request := new(RegisterRequest)
+		err := ctx.BodyParser(request)
+		if err != nil {
+			return nil
+		}
+
+		return ctx.SendString("Register Success " + request.Username)
+	})
+}
