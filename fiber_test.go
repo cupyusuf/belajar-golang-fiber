@@ -225,3 +225,24 @@ func TestBodyParserForm(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "Register Success Yusuf", string(bytes))
 }
+
+func TestBodyParserXML(t *testing.T) {
+	TestBodyParser(t)
+
+	body := strings.NewReader(
+		`<RegisterRequest>
+			<username>Yusuf</username>
+			<password>rahasia</password>
+			<name>Yusuf Supriadi</name>
+		</RegisterRequest>
+		`)
+	request := httptest.NewRequest("POST", "/register", body)
+	request.Header.Set("Content-Type", "application/xml")
+	response, err := app.Test(request)
+	assert.Nil(t, err)
+	assert.Equal(t, 200, response.StatusCode)
+
+	bytes, err := io.ReadAll(response.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "Register Success Yusuf", string(bytes))
+}
